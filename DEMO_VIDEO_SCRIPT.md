@@ -1,232 +1,292 @@
 # 🎬 YouTube Miner - Demo Video Script
 
 **Estimated Duration:** 4-5 minutes  
-**Format:** Screen recording with voiceover  
-**Tools Needed:** OBS/Screen recorder, Web browser, Terminal
+**Format:** Screen recording with voiceover 
+**Tools Needed:** OBS/Loom/QuickTime, Web browser, Terminal
 
 ---
 
-## 📍 Scene 1: Introduction (0:00 - 0:30)
+## 📍 Scene 1: Introduction (0:00 - 0:25)
 
 ### Visual
-- Show the GitHub repo / README with architecture diagram
-- Zoom into the project title
+- Show README with title and architecture diagram
+- Quick zoom on "100% Open Source • No Paid APIs"
 
 ### Narration
-> "Hey everyone! Today I'm excited to demo **YouTube Miner** - an end-to-end pipeline that compares YouTube auto-captions against AI-generated transcriptions.
+> "Hey everyone! Today I'm demoing **YouTube Miner** - an end-to-end pipeline that compares YouTube's auto-captions against AI-generated transcriptions.
 >
-> This tool helps answer a critical question: **How accurate are YouTube's auto-captions?** And which transcription model gives us the best results?
+<!-- > This tool answers a critical question: **How accurate are YouTube's captions?** And which AI model gives us the best results? -->
 >
-> Let's dive in and see it in action!"
+> Let's see it in action!"
 
 ---
 
-## 📍 Scene 2: Problem Statement (0:30 - 0:50)
+## 📍 Scene 2: Architecture (0:25 - 0:55)
 
 ### Visual
-- Show a YouTube video with auto-captions enabled
-- Highlight some caption errors (if visible)
-
-### Narration
-> "YouTube's auto-captions are great, but they're not perfect. They can miss words, mishear phrases, or struggle with accents and multilingual content.
->
-> YouTube Miner solves this by downloading any video, transcribing it using state-of-the-art AI models, and then comparing the results using multiple accuracy metrics."
-
----
-
-## 📍 Scene 3: Architecture Overview (0:50 - 1:20)
-
-### Visual
-- Show the architecture diagram (`docs/architecture.png`)
+- Show `docs/architecture.png` full screen
 - Point to each stage as you explain
 
 ### Narration
-> "Here's how the pipeline works:
+> "Here's the 9-stage pipeline:
 >
-> 1. **Stage 1-2:** We download the audio and captions from YouTube
-> 2. **Stage 3:** Audio is converted to 16kHz mono WAV format
-> 3. **Stage 4:** Voice Activity Detection segments the audio into chunks
-> 4. **Stage 5:** Each chunk is transcribed using your chosen AI model
-> 5. **Stage 6:** Captions are aligned with our chunks for comparison
-> 6. **Stage 7:** We compute accuracy metrics - WER, CER, Semantic Similarity, and our Hybrid Score
-> 7. **Stage 8:** Everything is compiled into a detailed JSON report
-> 8. **Stage 9:** You can download results as JSON, SRT subtitles, or plain text"
+> **Stages 1-2:** Download audio from YouTube using yt-dlp
+>
+> **Stage 3:** Convert to 16kHz WAV format
+>
+> **Stage 4:** Voice Activity Detection splits audio into ~30 second speech chunks
+>
+> **Stages 5-6:** Transcribe with AI models AND extract YouTube captions in parallel
+>
+> **Stages 7-8:** Compare using WER, CER, Semantic Similarity, and our Hybrid Score
+>
+> **Stage 9:** Download results as JSON, SRT subtitles, or plain text"
 
 ---
 
-## 📍 Scene 4: Available Models (1:20 - 1:50)
+## 📍 Scene 3: Quick Installation (0:55 - 1:15)
 
 ### Visual
-- Show the model comparison table from README
-- Highlight each model briefly
+- Terminal window
 
-### Narration
-> "YouTube Miner supports **four transcription models**:
->
-> - **Whisper Tiny** - Super fast, around 70% accuracy. Great for quick tests.
-> - **Faster Whisper** - Our recommended default! 80-90% accuracy with optimized speed.
-> - **Indic Seamless** - Perfect for Hindi and Indian languages. Built by AI4Bharat.
-> - **Whisper Large** - Highest accuracy but requires a powerful GPU.
->
-> Each model has its strengths depending on your use case."
+### Narration & Actions
+> "Installation is simple. First, make sure you have FFmpeg and Python 3.10+."
+
+```bash
+# Install FFmpeg (macOS)
+brew install ffmpeg
+
+# Clone and setup
+git clone <repository-url>
+cd youtube_miner
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+pip install -e .
+```
+
+> "That's it! Now let's start the web interface."
 
 ---
 
-## 📍 Scene 5: Live Demo - Web Interface (1:50 - 3:30)
+## 📍 Scene 4: Live Demo - Web Interface (1:15 - 3:00)
 
 ### Visual
-- Open browser to `http://localhost:5050`
-- Show the clean web interface
+- Terminal → Browser at `http://127.0.0.1:5000`
 
 ### Narration & Actions
 
-#### Step 1: Starting the Server
+#### Step 1: Start Server
 ```bash
 youtube-miner web start
 ```
-> "Let me start the web server. You can also use the CLI, but the web interface gives us a beautiful visual experience."
+> "One command starts the web server."
 
-#### Step 2: Enter a YouTube URL
-> "I'll paste a YouTube video URL here. Let's try this English video first."
+*Open browser to `http://127.0.0.1:5000`*
 
-*Paste URL, select `faster-whisper` model, select language*
+> "Here's the clean web interface - paste any YouTube URL."
 
-#### Step 3: Processing
-> "Watch the real-time progress! The pipeline shows each stage:
-> - Downloading audio... done!
-> - Extracting captions from YouTube...
-> - Converting audio format...
-> - Running Voice Activity Detection to find speech segments...
-> - Now transcribing each chunk with Faster Whisper..."
+#### Step 2: Process a Video
+> "Let me paste this NVIDIA CEO interview - it's a 63-minute video. I'll select **faster-whisper** as our model and **English** as the language."
 
-*Show progress bar and status updates*
+*Paste: `https://www.youtube.com/watch?v=7ARBJQn6QkM`*
+*Select: `faster-whisper`, `English`*
+*Click Process*
 
-#### Step 4: Results
-> "And we're done! Look at these results:
-> - **Hybrid Score: 83%** - That's excellent!
-> - **WER: 20%** - Only 1 in 5 words differs
-> - **Semantic Similarity: 87%** - The meaning is well preserved
+#### Step 3: Watch Progress
+> "Watch the real-time progress:
+> - Downloading audio... ✓
+> - Converting to WAV... ✓  
+> - Running Voice Activity Detection... ✓
+> - Transcribing 96 chunks with Faster Whisper...
 >
-> We can expand each chunk to see the side-by-side comparison between YouTube captions and our AI transcription."
+> This takes about 5 minutes for an hour-long video."
 
-*Click to expand a few chunks, show the comparison*
+*Show progress bar updating*
+
+#### Step 4: View Results
+> "Done! Let's look at the results:
+>
+> - **Hybrid Score: 83.4%** - That's excellent quality!
+> - **WER: 19.7%** - Great word accuracy
+> - **Semantic Similarity: 86.6%** - Meaning is well preserved
+>
+> I can expand any chunk to see side-by-side comparison."
+
+*Click to expand Chunk 0, show the text comparison*
+
+> "Look - the transcript and caption are almost identical! Only minor differences."
 
 #### Step 5: Download Options
-> "And here's a great feature - you can download the results in three formats:
-> - **JSON Report** - Full detailed analysis
-> - **SRT File** - Standard subtitle format for video editors
-> - **TXT File** - Plain text transcription"
+> "Now the best part - I can download results in three formats:"
 
 *Click each download button*
 
+> "**JSON Report** - Full analysis with all metrics
+> **SRT File** - Timed subtitles for video editors  
+> **TXT File** - Plain text transcription"
+
 ---
 
-## 📍 Scene 6: Hindi/Multilingual Demo (3:30 - 4:10)
+## 📍 Scene 5: Hindi Demo (3:00 - 3:40)
 
 ### Visual
-- Process a Hindi video using `indic-seamless`
+- New video processing with `indic-seamless`
 
 ### Narration
-> "Now let's try something interesting - a **Hindi video** with the Indic Seamless model.
+> "Now let's try something different - a **Hindi video** using the **Indic Seamless** model.
 >
-> This model is specifically trained for Indian languages by AI4Bharat."
+> This model is built by AI4Bharat specifically for Indian languages."
 
-*Paste Hindi video URL, select `indic-seamless`, select Hindi*
+*Paste Hindi video URL*
+*Select: `indic-seamless`, `Hindi`*
 
-> "Notice the processing takes a bit longer - that's because this is a larger multilingual model.
+> "Processing takes longer for this larger multilingual model...
 >
-> And here are the results! The WER is higher at around 54% - but that's expected because Hindi has code-switching between Hindi and English.
+> Here are the results:
+> - **Hybrid Score: 67.8%** - Acceptable for multilingual content
+> - **WER: 53.9%** - Higher because of code-switching between Hindi and English
+> - **But Semantic Similarity: 89.4%!** The meaning is excellently preserved.
 >
-> **But look at the Semantic Similarity - 89%!** The meaning is excellently preserved even when exact words differ."
+> That's the power of our Hybrid Score - it captures real-world quality even when exact words differ."
 
 ---
 
-## 📍 Scene 7: CLI Demo (Quick) (4:10 - 4:30)
+## 📍 Scene 6: CLI Demo (3:40 - 4:00)
 
 ### Visual
 - Terminal window
 
 ### Narration
-> "For automation and scripting, there's also a powerful CLI:"
+> "For automation, there's a powerful CLI:"
 
 ```bash
-# Process a video
-youtube-miner process "https://youtube.com/watch?v=VIDEO_ID" --model faster-whisper
+# Full pipeline
+youtube-miner run "URL" --model faster-whisper --output ./results
 
-# Just download audio
-youtube-miner download "VIDEO_URL" --output ./audio
-
-# Generate comparison report
-youtube-miner compare ./output/folder
+# Individual commands
+youtube-miner download "URL" -o ./audio
+youtube-miner transcribe chunk.wav -m faster-whisper
+youtube-miner compare "reference" "hypothesis"
 ```
 
-> "You can integrate this into your own pipelines!"
+> "You can integrate this into your own workflows!"
 
 ---
 
-## 📍 Scene 8: Results Summary (4:30 - 4:50)
+## 📍 Scene 7: Model Comparison (4:00 - 4:30)
 
 ### Visual
-- Show the comparison table from README
-- Show sample JSON report structure
+- Show the model comparison table from README
 
 ### Narration
-> "Here's what we found from our tests:
+> "Quick recap of our 4 supported models:
 >
-> | Content | Model | Hybrid Score |
+> | Model | Speed | Best For |
+> |-------|-------|----------|
+> | **whisper-tiny** | ⚡⚡⚡⚡⚡ | Quick tests |
+> | **faster-whisper** | ⚡⚡⚡⚡⚡ | **Production default** |
+> | **indic-seamless** | ⚡⚡⚡ | Hindi & Indian languages |
+> | **whisper-large** | ⚡ | Maximum accuracy |
+>
+> From our real-world tests:"
+
+*Show results summary table*
+
+> "| Content | Model | Hybrid Score |
 > |---------|-------|--------------|
-> | English Long (63 min) | faster-whisper | **83%** |
-> | English Short (5 min) | faster-whisper | **89%** |
-> | Hindi Long (67 min) | indic-seamless | **68%** |
+> | English Long | faster-whisper | **83.4%** |
+> | English Short | faster-whisper | **89.4%** |
+> | Hindi Long | indic-seamless | **67.8%** |
 >
-> The takeaway? **Faster Whisper is excellent for English**, and **Indic Seamless handles Hindi well** while preserving semantic meaning."
+> **Recommendation:** Use faster-whisper for English, indic-seamless for Hindi!"
 
 ---
 
-## 📍 Scene 9: Conclusion (4:50 - 5:00)
+## 📍 Scene 8: Conclusion (4:30 - 5:00)
 
 ### Visual
-- GitHub repo page
-- Star button highlight 😉
+- README page with technical documentation link
+- Architecture diagram
 
 ### Narration
-> "That's YouTube Miner! An end-to-end solution for analyzing caption accuracy with multiple AI models.
+> "That's YouTube Miner!
 >
-> The code is fully documented with architecture diagrams, technical design docs, and comprehensive tests.
+> ✅ **End-to-end pipeline** - Download → Transcribe → Compare → Report
+> ✅ **4 AI models** - From fast to accurate to multilingual
+> ✅ **Beautiful web UI** - Real-time progress, downloadable results
+> ✅ **Comprehensive metrics** - WER, CER, Semantic Similarity, Hybrid Score
 >
-> Thanks for watching! If you found this useful, check out the GitHub repo. Happy transcribing!"
+> Check out the Technical Design Document for deep architectural details and 100+ unit tests.
+>
+> Thanks for watching! Happy transcribing!"
 
 ---
 
-## 🎬 Video Tips
+## 🎬 Recording Checklist
 
-### Recording Checklist
-- [ ] Clean browser (no personal bookmarks visible)
-- [ ] Terminal with clear, readable font (14-16pt)
+### Before Recording
+- [ ] FFmpeg installed and working
+- [ ] Virtual environment activated
+- [ ] Clean browser (no personal bookmarks)
+- [ ] Terminal with readable font (14-16pt)
 - [ ] Close unnecessary applications
-- [ ] Stable internet connection for YouTube downloads
-- [ ] Pre-load the web interface at localhost:5050
+- [ ] Stable internet connection
+- [ ] Test videos ready to paste:
+  - English: `https://www.youtube.com/watch?v=7ARBJQn6QkM`
+  - Hindi: `https://www.youtube.com/watch?v=oHry5RRI4KU`
 
-### Editing Tips
-- Add subtle zoom effects when highlighting features
-- Use text overlays for key statistics
-- Add background music (low volume, royalty-free)
-- Include chapter markers for YouTube
+### Server Commands
+```bash
+# Start
+cd youtube_miner
+source venv/bin/activate
+youtube-miner web start
 
-### Recommended Tools
-- **Screen Recording:** OBS Studio (free), Loom, or QuickTime (Mac)
-- **Editing:** DaVinci Resolve (free), iMovie, or Premiere
-- **Thumbnail:** Canva with the architecture diagram
+# Stop when done
+youtube-miner web stop
+```
+
+---
+
+## 🎨 Editing Tips
+
+1. **Zoom effects** - Highlight UI elements when explaining
+2. **Text overlays** - Show key metrics as callouts
+3. **Chapter markers** - Add for YouTube navigation:
+   - 0:00 Introduction
+   - 0:25 Architecture
+   - 0:55 Installation
+   - 1:15 Web Demo
+   - 3:00 Hindi Demo
+   - 3:40 CLI
+   - 4:00 Model Comparison
+   - 4:30 Conclusion
+4. **Background music** - Low volume, royalty-free
+5. **Speed up** - 2x during long processing waits
 
 ---
 
 ## 📝 Key Points to Emphasize
 
-1. ✅ **End-to-end pipeline** - Download → Process → Compare → Report
-2. ✅ **Multiple AI models** - Choose based on language and speed needs
-3. ✅ **Real metrics** - WER, CER, Semantic Similarity, Hybrid Score
-4. ✅ **Beautiful web UI** - Real-time progress, expandable results
-5. ✅ **Download options** - JSON, SRT, TXT formats
-6. ✅ **Multilingual support** - English, Hindi, and more
-7. ✅ **Well documented** - Architecture diagrams, technical docs, tests
+| # | Point | When to Show |
+|---|-------|--------------|
+| 1 | **100% Open Source, No Paid APIs** | Introduction |
+| 2 | **9-Stage Pipeline** | Architecture diagram |
+| 3 | **Real-time Progress** | During processing |
+| 4 | **Hybrid Score balances WER + Semantic** | Results view |
+| 5 | **3 Download Formats** | After processing |
+| 6 | **Multilingual Support** | Hindi demo |
+| 7 | **Technical Documentation** | Conclusion |
 
+---
+
+## 🛠️ Recommended Tools
+
+| Purpose | Tool | Cost |
+|---------|------|------|
+| Screen Recording | OBS Studio | Free |
+| Quick Recording | Loom | Free tier |
+| Mac Recording | QuickTime | Built-in |
+| Video Editing | DaVinci Resolve | Free |
+| Thumbnail | Canva | Free |
