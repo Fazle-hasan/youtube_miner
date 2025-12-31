@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Miner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="noise-overlay"></div>
+    <div class="gradient-orb orb-1"></div>
+    <div class="gradient-orb orb-2"></div>
+    <div class="gradient-orb orb-3"></div>
+    
+    <header class="header">
+        <div class="logo">
+            <span class="logo-icon">⛏️</span>
+            <span class="logo-text">YouTube<span class="accent">Miner</span></span>
+        </div>
+        <nav class="nav">
+            <button class="nav-btn active" data-tab="process">Process</button>
+            <button class="nav-btn" data-tab="history">History</button>
+        </nav>
+    </header>
+
+    <main class="main">
+        <!-- Process Tab -->
+        <section id="process-tab" class="tab-content active">
+            <div class="hero">
+                <h1 class="title">Extract. Transcribe. <span class="gradient-text">Compare.</span></h1>
+                <p class="subtitle">Powerful audio processing pipeline for YouTube videos using state-of-the-art AI models</p>
+            </div>
+
+            <div class="input-section glass-card">
+                <div class="input-group">
+                    <label for="url-input" class="input-label">YouTube URL</label>
+                    <div class="url-input-wrapper">
+                        <input 
+                            type="url" 
+                            id="url-input" 
+                            class="url-input" 
+                            placeholder="https://www.youtube.com/watch?v=..."
+                            autocomplete="off"
+                        >
+                        <div class="input-glow"></div>
+                    </div>
+                </div>
+
+                <div class="options-row">
+                    <div class="option-group">
+                        <label class="input-label">Transcription Model</label>
+                        <div class="model-select">
+                            {% for model in models %}
+                            <button 
+                                class="model-btn {% if model == 'faster-whisper' %}active{% endif %}" 
+                                data-model="{{ model }}"
+                            >
+                                {{ model }}
+                            </button>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label class="input-label">Language</label>
+                        <select id="language-select" class="language-select">
+                            <option value="en" selected>English</option>
+                            <option value="hi">Hindi</option>
+                            <option value="es">Spanish</option>
+                            <option value="fr">French</option>
+                            <option value="de">German</option>
+                            <option value="ja">Japanese</option>
+                            <option value="zh">Chinese</option>
+                            <option value="ar">Arabic</option>
+                            <option value="ru">Russian</option>
+                            <option value="pt">Portuguese</option>
+                            <option value="ko">Korean</option>
+                            <option value="it">Italian</option>
+                            <option value="ta">Tamil</option>
+                            <option value="te">Telugu</option>
+                            <option value="bn">Bengali</option>
+                            <option value="auto">Auto-detect</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button id="process-btn" class="process-btn">
+                    <span class="btn-text">Start Mining</span>
+                    <span class="btn-icon">→</span>
+                </button>
+            </div>
+
+            <!-- Progress Section with Chunks -->
+            <div id="progress-section" class="progress-section glass-card hidden">
+                <div class="progress-header">
+                    <div class="progress-info">
+                        <h3 class="progress-title" id="video-title">Processing</h3>
+                        <span id="progress-stage" class="progress-stage">Initializing...</span>
+                    </div>
+                    <div class="progress-stats-header">
+                        <span id="progress-percent" class="progress-percent-large">0%</span>
+                    </div>
+                </div>
+                <div class="progress-bar-container">
+                    <div id="progress-bar" class="progress-bar"></div>
+                </div>
+                
+                <!-- Chunk Progress Grid -->
+                <div id="chunks-section" class="chunks-section hidden">
+                    <div class="chunks-header">
+                        <h4 class="chunks-title">Chunk Results</h4>
+                        <span id="chunks-count" class="chunks-count">0/0 chunks</span>
+                    </div>
+                    <div id="chunks-grid" class="chunks-grid">
+                        <!-- Chunks will be added here dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chunk Detail Modal -->
+            <div id="chunk-modal" class="chunk-modal hidden">
+                <div class="chunk-modal-content glass-card">
+                    <div class="chunk-modal-header">
+                        <h3 id="chunk-modal-title">Chunk Details</h3>
+                        <button id="chunk-modal-close" class="chunk-modal-close">×</button>
+                    </div>
+                    <div class="chunk-modal-body">
+                        <div class="chunk-time-info">
+                            <span id="chunk-time-range" class="chunk-time">0:00 - 0:30</span>
+                            <span id="chunk-duration" class="chunk-duration">30.0s</span>
+                        </div>
+                        
+                        <div class="chunk-metrics-row">
+                            <div class="chunk-metric">
+                                <span class="chunk-metric-label">WER</span>
+                                <span id="chunk-wer" class="chunk-metric-value">0%</span>
+                            </div>
+                            <div class="chunk-metric">
+                                <span class="chunk-metric-label">CER</span>
+                                <span id="chunk-cer" class="chunk-metric-value">0%</span>
+                            </div>
+                            <div class="chunk-metric">
+                                <span class="chunk-metric-label">Semantic</span>
+                                <span id="chunk-semantic" class="chunk-metric-value">0%</span>
+                            </div>
+                            <div class="chunk-metric featured">
+                                <span class="chunk-metric-label">Hybrid</span>
+                                <span id="chunk-hybrid" class="chunk-metric-value">0%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="chunk-text-section">
+                            <div class="chunk-text-block">
+                                <label class="chunk-text-label">🤖 Model Transcript</label>
+                                <div id="chunk-transcript" class="chunk-text-content"></div>
+                            </div>
+                            <div class="chunk-text-block">
+                                <label class="chunk-text-label">📝 YouTube Caption</label>
+                                <div id="chunk-caption" class="chunk-text-content"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div id="results-section" class="results-section hidden">
+                <div class="results-header glass-card">
+                    <div class="video-info">
+                        <h2 id="result-title" class="result-title">Video Title</h2>
+                        <div class="result-meta">
+                            <span id="result-duration" class="meta-item">
+                                <span class="meta-icon">⏱️</span>
+                                <span class="meta-value">0:00</span>
+                            </span>
+                            <span id="result-chunks" class="meta-item">
+                                <span class="meta-icon">🔊</span>
+                                <span class="meta-value">0 chunks</span>
+                            </span>
+                            <span id="result-time" class="meta-item">
+                                <span class="meta-icon">⚡</span>
+                                <span class="meta-value">0s</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="metric-card glass-card">
+                        <div class="metric-icon wer-icon">📊</div>
+                        <div class="metric-content">
+                            <span class="metric-label">Word Error Rate</span>
+                            <span id="metric-wer" class="metric-value">0%</span>
+                        </div>
+                        <div class="metric-bar">
+                            <div id="bar-wer" class="metric-bar-fill wer"></div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card glass-card">
+                        <div class="metric-icon cer-icon">📝</div>
+                        <div class="metric-content">
+                            <span class="metric-label">Character Error Rate</span>
+                            <span id="metric-cer" class="metric-value">0%</span>
+                        </div>
+                        <div class="metric-bar">
+                            <div id="bar-cer" class="metric-bar-fill cer"></div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card glass-card">
+                        <div class="metric-icon semantic-icon">🧠</div>
+                        <div class="metric-content">
+                            <span class="metric-label">Semantic Similarity</span>
+                            <span id="metric-semantic" class="metric-value">0%</span>
+                        </div>
+                        <div class="metric-bar">
+                            <div id="bar-semantic" class="metric-bar-fill semantic"></div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card glass-card featured">
+                        <div class="metric-icon hybrid-icon">⚡</div>
+                        <div class="metric-content">
+                            <span class="metric-label">Hybrid Score</span>
+                            <span id="metric-hybrid" class="metric-value">0%</span>
+                        </div>
+                        <div class="metric-bar">
+                            <div id="bar-hybrid" class="metric-bar-fill hybrid"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Download Section -->
+                <div class="download-section glass-card">
+                    <div class="download-header">
+                        <h3>📥 Download Results</h3>
+                        <span class="download-hint">Export transcription in various formats</span>
+                    </div>
+                    <div class="download-buttons">
+                        <button id="download-report" class="download-btn download-report">
+                            <span class="download-icon">📊</span>
+                            <span class="download-label">Report (JSON)</span>
+                        </button>
+                        <button id="download-srt" class="download-btn download-srt">
+                            <span class="download-icon">🎬</span>
+                            <span class="download-label">Subtitles (SRT)</span>
+                        </button>
+                        <button id="download-txt" class="download-btn download-txt">
+                            <span class="download-icon">📄</span>
+                            <span class="download-label">Transcript (TXT)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Final Chunks View -->
+                <div class="final-chunks-section glass-card">
+                    <div class="final-chunks-header">
+                        <h3>All Chunk Results</h3>
+                        <span class="final-chunks-hint">Click on any chunk to view details</span>
+                    </div>
+                    <div id="final-chunks-grid" class="chunks-grid"></div>
+                </div>
+
+                <button id="new-process-btn" class="new-process-btn">
+                    Process Another Video
+                </button>
+            </div>
+        </section>
+
+        <!-- History Tab -->
+        <section id="history-tab" class="tab-content">
+            <div class="history-header">
+                <h2 class="history-title">Processing History</h2>
+                <p class="history-subtitle">Previously analyzed videos</p>
+            </div>
+            
+            <div id="history-list" class="history-list">
+                <!-- Dynamically populated -->
+            </div>
+            
+            <div id="history-empty" class="history-empty glass-card hidden">
+                <span class="empty-icon">📭</span>
+                <p>No videos processed yet</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>Built with ❤️ using open-source AI models</p>
+        <div class="tech-stack">
+            <span class="tech-tag">Whisper</span>
+            <span class="tech-tag">Silero VAD</span>
+            <span class="tech-tag">Sentence Transformers</span>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

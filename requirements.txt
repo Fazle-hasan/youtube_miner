@@ -1,0 +1,45 @@
+# YouTube Miner Dependencies
+# Install with: pip install -r requirements.txt
+
+# Core - YouTube Download
+yt-dlp>=2024.1.1
+youtube-transcript-api>=1.0.0
+
+# Audio Processing
+pydub>=0.25.1
+librosa>=0.10.0
+soundfile>=0.12.1
+
+# Voice Activity Detection
+torch>=2.0.0
+torchaudio>=2.0.0
+silero-vad>=5.1
+
+# Transcription Models
+faster-whisper>=0.10.0
+openai-whisper>=20231117
+transformers>=4.36.0
+accelerate>=0.25.0
+sentencepiece>=0.2.0
+huggingface_hub>=0.20.0
+
+# Comparison Metrics
+jiwer>=3.0.0
+sentence-transformers>=2.2.0
+
+# CLI & UI
+click>=8.1.0
+rich>=13.0.0
+tqdm>=4.66.0
+
+# Web Interface
+flask>=3.0.0
+
+# Utilities
+numpy>=1.24.0
+pyyaml>=6.0.0
+certifi>=2024.0.0
+
+# Development (install with: pip install -r requirements.txt -r requirements-dev.txt)
+# Or use: pip install -e ".[dev]"
+

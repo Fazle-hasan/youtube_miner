@@ -1,0 +1,167 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.0.3 Chrome/140.0.7339.249 Electron/38.7.0 Safari/537.36" version="29.0.3">
+  <diagram name="YouTube Miner Architecture" id="youtube-miner-arch">
+    <mxGraphModel dx="1299" dy="852" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="YouTube Miner - Complete Data Pipeline Architecture" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#1a1a2e;" parent="1" vertex="1">
+          <mxGeometry x="310" y="20" width="700" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="input" value="🔗 YouTube URL" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#1565c0;fontStyle=1;fontSize=14;" parent="1" vertex="1">
+          <mxGeometry x="700" y="80" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="download" value="📥 Stage 1: Download&#xa;yt-dlp (MP3)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#ef6c00;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="120" y="180" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="convert" value="🔊 Stage 2: Convert&#xa;WAV 16kHz Mono" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#2e7d32;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="300" y="180" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vad" value="🎯 Stage 3: VAD Chunk&#xa;Silero VAD (~30s)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0277bd;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="480" y="180" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="transcribe" value="🗣️ Stage 4a: Transcribe&#xa;Multi-Model ASR" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="680" y="160" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="captions" value="📝 Stage 4b: Captions&#xa;youtube-transcript-api" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e0f2f1;strokeColor=#00695c;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="680" y="240" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dedup" value="🔁 Stage 5: Deduplicate&#xa;N-gram Removal" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c2185b;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="880" y="160" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="normalize" value="📋 Stage 6: Normalize&#xa;Text Preprocessing" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff8e1;strokeColor=#ff8f00;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="1060" y="200" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="arr1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#666;" parent="1" source="input" target="download" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#666;" parent="1" source="download" target="convert" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#666;" parent="1" source="convert" target="vad" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr4a" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#666;" parent="1" source="vad" target="transcribe" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr4b" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#666;dashed=1;" parent="1" source="input" target="captions" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="800" y="130" />
+              <mxPoint x="640" y="130" />
+              <mxPoint x="640" y="270" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arr5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#666;" parent="1" source="transcribe" target="dedup" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr6a" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#666;" parent="1" source="dedup" target="normalize" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr6b" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#666;" parent="1" source="captions" target="normalize" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="models-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fafafa;strokeColor=#9e9e9e;strokeWidth=2;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="90" y="490" width="500" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="models-title" value="&amp;nbsp;Transcription Models (Open Source)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="190" y="502.5" width="300" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="whisper-tiny" value="Whisper-Tiny&#xa;⚡ Fastest&#xa;~1GB RAM" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1976d2;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="110" y="532.5" width="100" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="faster-whisper" value="Faster-Whisper&#xa;⭐ Recommended&#xa;~2GB RAM" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#388e3c;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="230" y="532.5" width="100" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="indic-seamless" value="Indic-Seamless&#xa;🌍 Multilingual&#xa;~4GB RAM" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#f57c00;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="350" y="532.5" width="100" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="whisper-large" value="Whisper-Large&#xa;🎯 Best Accuracy&#xa;~6GB RAM" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1bee7;strokeColor=#8e24aa;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="470" y="532.5" width="100" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="hf-note" value="🔑 HF_TOKEN Required" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;fontColor=#f57c00;" parent="1" vertex="1">
+          <mxGeometry x="350" y="595" width="100" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="metrics-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fafafa;strokeColor=#9e9e9e;strokeWidth=2;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="640" y="490" width="540" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="metrics-title" value="Comparison Metrics (Stage 7)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="810" y="495" width="220" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="wer" value="WER&#xa;Word Error Rate&#xa;Lower = Better" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdd2;strokeColor=#c62828;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="670" y="525" width="100" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="cer" value="CER&#xa;Char Error Rate&#xa;Lower = Better" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8bbd9;strokeColor=#ad1457;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="790" y="525" width="100" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="semantic" value="Semantic&#xa;Embedding Sim&#xa;Higher = Better" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#b2dfdb;strokeColor=#00796b;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="910" y="525" width="100" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="hybrid" value="Hybrid Score&#xa;SeMaScore&#xa;Higher = Better" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d1c4e9;strokeColor=#512da8;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="1030" y="525" width="100" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="jiwer" value="jiwer" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=8;fontColor=#666;" parent="1" vertex="1">
+          <mxGeometry x="730" y="580" width="40" height="15" as="geometry" />
+        </mxCell>
+        <mxCell id="st" value="sentence-transformers" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=8;fontColor=#666;" parent="1" vertex="1">
+          <mxGeometry x="910" y="580" width="100" height="15" as="geometry" />
+        </mxCell>
+        <mxCell id="compare" value="⚖️ Stage 7: Compare&#xa;Transcript vs Captions" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#f9a825;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="1050" y="350" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="report" value="📄 Stage 8: Report&#xa;Generate Results" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c5cae9;strokeColor=#3949ab;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="790" y="350" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="arr7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#666;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="normalize" target="compare" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1130" y="320" />
+              <mxPoint x="1130" y="320" />
+            </Array>
+            <mxPoint x="1130" y="280" as="sourcePoint" />
+            <mxPoint x="580" y="530" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arr8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#666;" parent="1" source="compare" target="report" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="download-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#4caf50;strokeWidth=3;" parent="1" vertex="1">
+          <mxGeometry x="400" y="310" width="300" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="download-title" value="📥 Download Options (Stage 9)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;fontColor=#2e7d32;" parent="1" vertex="1">
+          <mxGeometry x="430" y="315" width="240" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="json-download" value="📊 JSON Report&#xa;Full Analysis" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#388e3c;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="420" y="350" width="80" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="srt-download" value="🎬 SRT File&#xa;Subtitles" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#ff9800;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="510" y="350" width="80" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-download" value="📄 TXT File&#xa;Transcript" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#2196f3;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="600" y="350" width="80" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="download-note" value="Click to download after processing" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;fontColor=#666;" parent="1" vertex="1">
+          <mxGeometry x="450" y="410" width="200" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="arr9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#4caf50;" parent="1" source="report" target="download-box" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="usage-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8eaf6;strokeColor=#3f51b5;strokeWidth=2;" parent="1" vertex="1">
+          <mxGeometry x="50" y="325" width="320" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="usage-title" value="🛠️ Three Ways to Use" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="130" y="330" width="160" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="web" value="🌐 Web UI&#xa;Flask + Modern UI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1976d2;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="70" y="360" width="80" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="cli" value="💻 CLI Tool&#xa;youtube-miner" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#388e3c;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="170" y="360" width="80" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="python" value="🐍 Python API&#xa;Pipeline Class" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#f9a825;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="270" y="360" width="80" height="50" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
