@@ -27,6 +27,188 @@ A powerful Python data pipeline for YouTube audio extraction, Voice Activity Det
 
 ---
 
+## 🚀 Installation
+
+### Prerequisites
+
+- Python 3.10+
+- FFmpeg
+- 8GB+ RAM
+
+### Step 1: Install FFmpeg
+
+```bash
+# macOS
+brew install ffmpeg
+
+# Ubuntu/Debian
+sudo apt install ffmpeg
+
+# Windows
+choco install ffmpeg
+```
+
+### Step 2: Install YouTube Miner
+
+```bash
+# Clone repository
+git clone <repository-url>
+cd youtube_miner
+
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # Linux/macOS
+# or: venv\Scripts\activate  # Windows
+
+# Install dependencies
+pip install -r requirements.txt
+pip install -e .
+```
+
+### Step 3: Verify Installation
+
+```bash
+# Check CLI is available
+youtube-miner --help
+
+# Verify FFmpeg
+ffmpeg -version
+```
+
+---
+
+## 🌐 Quick Start: Web Interface
+
+The easiest way to use YouTube Miner! Perfect for beginners.
+
+### Start the Server
+
+```bash
+# Start web interface
+youtube-miner web start
+
+# Start in background
+youtube-miner web start --background
+
+# Custom host/port
+youtube-miner web start --host 0.0.0.0 --port 8080
+```
+
+### Use the Web UI
+
+1. **Open browser** → `http://127.0.0.1:5000`
+2. **Paste** any YouTube URL
+3. **Select** transcription model (recommend: `faster-whisper`)
+4. **Select** language (English, Hindi, Auto)
+5. **Click Process** and watch real-time progress!
+6. **View results** with expandable chunk comparisons
+7. **Download** as JSON, SRT, or TXT
+
+### Features
+
+- ✅ Paste any YouTube URL
+- ✅ Select transcription model
+- ✅ Real-time progress tracking
+- ✅ Beautiful metric visualization
+- ✅ Download JSON, SRT, or TXT files
+- ✅ Processing history
+
+### Stop the Server
+
+```bash
+youtube-miner web stop
+```
+
+---
+
+## 💻 CLI Tool
+
+For automation and scripting workflows.
+
+### Full Pipeline
+
+```bash
+# Process a video
+youtube-miner run "https://www.youtube.com/watch?v=VIDEO_ID"
+
+# Specify model and output
+youtube-miner run "URL" --model faster-whisper --output ./results
+```
+
+### Individual Commands
+
+```bash
+# Download audio
+youtube-miner download "URL" -o ./audio
+
+# Convert to WAV
+youtube-miner convert audio.m4a -o audio.wav
+
+# Create speech chunks
+youtube-miner chunk audio.wav -o ./chunks
+
+# Transcribe
+youtube-miner transcribe chunk.wav -m faster-whisper
+
+# Extract captions
+youtube-miner captions "URL"
+
+# Compare texts
+youtube-miner compare "reference text" "hypothesis text"
+
+# List models
+youtube-miner models
+```
+
+---
+
+## 🐍 Python API
+
+For custom workflows and integration.
+
+### Basic Usage
+
+```python
+from src.pipeline import YouTubeMinerPipeline
+
+# Create pipeline
+pipeline = YouTubeMinerPipeline(
+    output_dir="./output",
+    model="faster-whisper",
+    language="en",
+)
+
+# Process video
+report = pipeline.run("https://www.youtube.com/watch?v=VIDEO_ID")
+
+# Access results
+print(f"Video: {report.video_title}")
+print(f"Hybrid Score: {report.summary.avg_hybrid_score:.2%}")
+```
+
+### Using Individual Components
+
+```python
+from src.downloader import YouTubeDownloader
+from src.transcriber import get_transcriber
+from src.comparator import HybridScore
+
+# Download
+downloader = YouTubeDownloader(output_dir="./output")
+audio, info = downloader.download_with_info(url)
+
+# Transcribe
+transcriber = get_transcriber("faster-whisper")
+transcripts = transcriber.transcribe_chunks(chunks)
+
+# Compare
+scorer = HybridScore()
+result = scorer.compare(reference, hypothesis)
+print(f"Hybrid Score: {result.hybrid_score:.2%}")
+```
+
+---
+
 ## 🤖 Model Comparison & Recommendations
 
 YouTube Miner supports 4 open-source transcription models. Here's our analysis based on extensive testing:
@@ -80,6 +262,20 @@ YouTube Miner supports 4 open-source transcription models. Here's our analysis b
 | Maximum accuracy needed | `whisper-large` | 90-95%+ |
 | Quick draft/preview | `whisper-tiny` | 70%+ |
 
+### Using Indic-Seamless (Multilingual)
+
+The `indic-seamless` model requires Hugging Face authentication:
+
+```bash
+# Set your HF token
+export HF_TOKEN=your_huggingface_token
+
+# Use the model
+youtube-miner run "URL" --model indic-seamless --language hi
+```
+
+Get your token at: https://huggingface.co/settings/tokens
+
 ---
 
 ## 📊 Understanding Comparison Metrics
@@ -118,137 +314,6 @@ The meaning is preserved even when words differ!
 
 ---
 
-## 🛠️ Three Ways to Use
-
-| Method | Best For | Interface |
-|--------|----------|-----------|
-| 🌐 **Web UI** | Visual interface, beginners | Browser |
-| 💻 **CLI** | Automation, scripting | Terminal |
-| 🐍 **Python API** | Custom workflows, integration | Code |
-
----
-
-## 🌐 Web Interface
-
-The easiest way to use YouTube Miner!
-
-### Start the Server
-
-```bash
-# Start web interface
-youtube-miner web start
-
-# Start in background
-youtube-miner web start --background
-
-# Custom host/port
-youtube-miner web start --host 0.0.0.0 --port 8080
-```
-
-### Access the UI
-
-Open `http://127.0.0.1:5000` in your browser.
-
-**Features:**
-- ✅ Paste any YouTube URL
-- ✅ Select transcription model
-- ✅ Real-time progress tracking
-- ✅ Beautiful metric visualization
-- ✅ Download JSON, SRT, or TXT files
-- ✅ Processing history
-
-### Stop the Server
-
-```bash
-youtube-miner web stop
-```
-
----
-
-## 💻 CLI Tool
-
-### Full Pipeline
-
-```bash
-# Process a video
-youtube-miner run "https://www.youtube.com/watch?v=VIDEO_ID"
-
-# Specify model
-youtube-miner run "URL" --model faster-whisper --output ./results
-```
-
-### Individual Commands
-
-```bash
-# Download audio
-youtube-miner download "URL" -o ./audio
-
-# Convert to WAV
-youtube-miner convert audio.m4a -o audio.wav
-
-# Create speech chunks
-youtube-miner chunk audio.wav -o ./chunks
-
-# Transcribe
-youtube-miner transcribe chunk.wav -m faster-whisper
-
-# Extract captions
-youtube-miner captions "URL"
-
-# Compare texts
-youtube-miner compare "reference text" "hypothesis text"
-
-# List models
-youtube-miner models
-```
-
----
-
-## 🐍 Python API
-
-### Basic Usage
-
-```python
-from src.pipeline import YouTubeMinerPipeline
-
-# Create pipeline
-pipeline = YouTubeMinerPipeline(
-    output_dir="./output",
-    model="faster-whisper",
-    language="en",
-)
-
-# Process video
-report = pipeline.run("https://www.youtube.com/watch?v=VIDEO_ID")
-
-# Access results
-print(f"Video: {report.video_title}")
-print(f"Hybrid Score: {report.summary.avg_hybrid_score:.2%}")
-```
-
-### Using Individual Components
-
-```python
-from src.downloader import YouTubeDownloader
-from src.transcriber import get_transcriber
-from src.comparator import HybridScore
-
-# Download
-downloader = YouTubeDownloader(output_dir="./output")
-audio, info = downloader.download_with_info(url)
-
-# Transcribe
-transcriber = get_transcriber("faster-whisper")
-transcripts = transcriber.transcribe_chunks(chunks)
-
-# Compare
-scorer = HybridScore()
-result = scorer.compare(reference, hypothesis)
-print(f"Hybrid Score: {result.hybrid_score:.2%}")
-```
-
----
-
 ## 📁 Output Structure
 
 ```
@@ -271,11 +336,13 @@ After processing, download:
 
 ---
 
-## 📋 Real-World Example
+## 📋 Real-World Examples
+
+### Example 1: Long-Form English Content
 
 Here's an actual output from processing a 63-minute NVIDIA CEO interview using `faster-whisper`:
 
-### Video Details
+#### Video Details
 
 | Field | Value |
 |-------|-------|
@@ -285,7 +352,7 @@ Here's an actual output from processing a 63-minute NVIDIA CEO interview using `
 | **Total Chunks** | 96 segments |
 | **Processing Time** | 308 seconds (~5 minutes) |
 
-### Summary Results
+#### Summary Results
 
 | Metric | Score | Interpretation |
 |--------|-------|----------------|
@@ -294,7 +361,7 @@ Here's an actual output from processing a 63-minute NVIDIA CEO interview using `
 | **Semantic Similarity** | 86.6% | 🟢 Excellent meaning preservation |
 | **Hybrid Score (SeMaScore)** | 83.4% | 🟢 Good overall quality |
 
-### Sample Chunk Comparisons
+#### Sample Chunk Comparisons
 
 **Chunk 0 - Excellent Match (95.1% Hybrid Score)**
 
@@ -318,59 +385,13 @@ Here's an actual output from processing a 63-minute NVIDIA CEO interview using `
 |-----|-----|----------|--------|
 | 4.8% | 4.4% | 97.4% | **96.3%** |
 
-**Chunk 38 - Lower Match (68.3% Hybrid Score)**
-
-| Source | Text |
-|--------|------|
-| **Transcript** | "3d worlds that help train robotic systems so that they do not need to train in the physical world you just announced cosmos which is ways to make that 3d universe much more realistic..." |
-| **YouTube Caption** | "nvidia is building tools to make that happen you have omniverse and my understanding is this is 3d worlds that help train robotic systems so that they do not need to train in the physical world..." |
-
-| WER | CER | Semantic | Hybrid |
-|-----|-----|----------|--------|
-| 32.0% | 32.7% | 68.6% | **68.3%** |
-
-> 💡 **Insight:** The chunk with lower score has timing misalignment between transcript and caption boundaries, which is expected and shows the robustness of our scoring system.
-
-### JSON Report Structure
-
-```json
-{
-  "video_url": "https://www.youtube.com/watch?v=7ARBJQn6QkM",
-  "video_title": "NVIDIA CEO Jensen Huang's Vision for the Future",
-  "video_duration": 3783,
-  "processed_at": "2025-12-29T19:36:20.427123",
-  "processing_time": 308.33,
-  "model_used": "faster-whisper",
-  "total_chunks": 96,
-  "results": [
-    {
-      "chunk_index": 0,
-      "normalized_transcript": "...",
-      "normalized_caption": "...",
-      "wer": 0.0372,
-      "cer": 0.0177,
-      "semantic_similarity": 0.9391,
-      "hybrid_score": 0.951,
-      "computed_at": "2025-12-29T19:33:42.820708"
-    }
-    // ... 95 more chunks
-  ],
-  "summary": {
-    "avg_wer": 0.197,
-    "avg_cer": 0.1724,
-    "avg_semantic_similarity": 0.8657,
-    "avg_hybrid_score": 0.8344
-  }
-}
-```
-
 ---
 
-## 📋 Example 2: Short-Form Content
+### Example 2: Short-Form English Content
 
 Here's another example from a 5.5-minute tech career advice video:
 
-### Video Details
+#### Video Details
 
 | Field | Value |
 |-------|-------|
@@ -380,7 +401,7 @@ Here's another example from a 5.5-minute tech career advice video:
 | **Total Chunks** | 8 segments |
 | **Processing Time** | 32 seconds |
 
-### Summary Results
+#### Summary Results
 
 | Metric | Score | Interpretation |
 |--------|-------|----------------|
@@ -389,7 +410,7 @@ Here's another example from a 5.5-minute tech career advice video:
 | **Semantic Similarity** | 90.7% | 🟢 Excellent meaning preservation |
 | **Hybrid Score (SeMaScore)** | 89.4% | 🟢 Excellent overall quality |
 
-### Sample Chunk Comparisons
+#### Sample Chunk Comparisons
 
 **Chunk 0 - Excellent Match (94.7% Hybrid Score)**
 
@@ -402,49 +423,18 @@ Here's another example from a 5.5-minute tech career advice video:
 |-----|-----|----------|--------|
 | 8.3% | 7.3% | 97.6% | **94.7%** |
 
-**Chunk 1 - High Quality (94.9% Hybrid Score)**
-
-| Source | Text |
-|--------|------|
-| **Transcript** | "ai engineers integrate existing models into applications they are building products and tools that solve real problems for example you might build a system that stores company information in a vector database..." |
-| **YouTube Caption** | "ai engineers integrate existing models into applications they are building products and tools that solve real problems for example you might build a system that stores company information in a vector database..." |
-
-| WER | CER | Semantic | Hybrid |
-|-----|-----|----------|--------|
-| 7.5% | 5.3% | 97.2% | **94.9%** |
-
-**Chunk 6 - Good Quality (90.2% Hybrid Score)**
-
-| Source | Text |
-|--------|------|
-| **Transcript** | "this project demonstrates full stack skills browser apis for recording a python fast api backend local ai with whisper and llm integration and most importantly it is useful..." |
-| **YouTube Caption** | "this project demonstrates full stack skills browser apis for recording a python fast api backend local ai with whisper and lm integration and most importantly it is useful..." |
-
-| WER | CER | Semantic | Hybrid |
-|-----|-----|----------|--------|
-| 13.5% | 9.7% | 94.0% | **90.2%** |
-
 > 💡 **Key Insight:** Shorter videos typically achieve higher accuracy scores because:
 > - Less audio variation and background noise
 > - More consistent speaking pace
 > - Better alignment between transcript and caption chunks
 
-### Comparison: Long vs Short Videos
-
-| Aspect | Long Video (63 min) | Short Video (5.5 min) |
-|--------|---------------------|----------------------|
-| **Hybrid Score** | 83.4% | 89.4% |
-| **WER** | 19.7% | 11.9% |
-| **Processing Time** | ~5 min | ~32 sec |
-| **Chunks** | 96 | 8 |
-
 ---
 
-## 📋 Example 3: Multilingual Content (Hindi)
+### Example 3: Multilingual Content (Hindi)
 
 Here's an example using `indic-seamless` model for Hindi language content:
 
-### Video Details
+#### Video Details
 
 | Field | Value |
 |-------|-------|
@@ -454,7 +444,7 @@ Here's an example using `indic-seamless` model for Hindi language content:
 | **Total Chunks** | 91 segments |
 | **Processing Time** | 5,984 seconds (~100 minutes) |
 
-### Summary Results
+#### Summary Results
 
 | Metric | Score | Interpretation |
 |--------|-------|----------------|
@@ -463,7 +453,7 @@ Here's an example using `indic-seamless` model for Hindi language content:
 | **Semantic Similarity** | 89.4% | 🟢 Excellent meaning preservation |
 | **Hybrid Score (SeMaScore)** | 67.8% | 🟡 Acceptable overall quality |
 
-### Sample Chunk (Hindi Transcription)
+#### Sample Chunk (Hindi Transcription)
 
 **Chunk 8 - Good Match (74.0% Hybrid Score)**
 
@@ -476,7 +466,7 @@ Here's an example using `indic-seamless` model for Hindi language content:
 |-----|-----|----------|--------|
 | 47.3% | 36.4% | 95.3% | **74.0%** |
 
-### Key Insights for Multilingual Content
+#### Key Insights for Multilingual Content
 
 > 💡 **Why are WER/CER higher for Hindi?**
 > - **Code-switching**: Hindi videos often mix Hindi and English words
@@ -486,7 +476,9 @@ Here's an example using `indic-seamless` model for Hindi language content:
 >
 > **However, Semantic Similarity remains high (89.4%)** because the *meaning* is well-preserved even when exact words differ!
 
-### Model Comparison Summary
+---
+
+### Summary: Model Comparison Results
 
 | Content Type | Model | WER | Semantic | Hybrid | Processing |
 |--------------|-------|-----|----------|--------|------------|
@@ -495,59 +487,6 @@ Here's an example using `indic-seamless` model for Hindi language content:
 | Hindi (Long) | `indic-seamless` | 53.9% | 89.4% | **67.8%** | 100 min |
 
 > 🎯 **Recommendation**: Use `faster-whisper` for English content, `indic-seamless` for Hindi/Indian languages. Expect higher WER for multilingual content but good semantic preservation.
-
----
-
-## 🚀 Installation
-
-### Prerequisites
-
-- Python 3.10+
-- FFmpeg
-- 8GB+ RAM
-
-### Install FFmpeg
-
-```bash
-# macOS
-brew install ffmpeg
-
-# Ubuntu/Debian
-sudo apt install ffmpeg
-
-# Windows
-choco install ffmpeg
-```
-
-### Install YouTube Miner
-
-```bash
-# Clone repository
-git clone <repository-url>
-cd youtube_miner
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # Linux/macOS
-
-# Install dependencies
-pip install -r requirements.txt
-pip install -e .
-```
-
-### Using Indic-Seamless (Multilingual)
-
-The `indic-seamless` model requires Hugging Face authentication:
-
-```bash
-# Set your HF token
-export HF_TOKEN=your_huggingface_token
-
-# Use the model
-youtube-miner run "URL" --model indic-seamless --language hi
-```
-
-Get your token at: https://huggingface.co/settings/tokens
 
 ---
 
