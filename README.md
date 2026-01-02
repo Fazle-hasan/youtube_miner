@@ -65,7 +65,30 @@ pip install -r requirements.txt
 pip install -e .
 ```
 
-### Step 3: Verify Installation
+### Step 3: Configure Environment Variables
+
+Create a `.env` file in the project root for HuggingFace authentication:
+
+```bash
+# Copy the example file
+cp .env.example .env
+
+# Edit with your token
+nano .env  # or use any text editor
+```
+
+Add your HuggingFace token:
+
+```env
+# Required for Indic-Seamless model and sentence-transformers
+HF_TOKEN=your_huggingface_token_here
+```
+
+Get your free token at: https://huggingface.co/settings/tokens
+
+> ⚠️ **Note:** The `.env` file is gitignored and won't be committed to version control.
+
+### Step 4: Verify Installation
 
 ```bash
 # Check CLI is available
@@ -264,13 +287,16 @@ YouTube Miner supports 4 open-source transcription models. Here's our analysis b
 
 ### Using Indic-Seamless (Multilingual)
 
-The `indic-seamless` model requires Hugging Face authentication:
+The `indic-seamless` model requires Hugging Face authentication. Make sure your `.env` file is configured:
+
+```env
+# .env file
+HF_TOKEN=your_huggingface_token
+```
+
+Then use the model:
 
 ```bash
-# Set your HF token
-export HF_TOKEN=your_huggingface_token
-
-# Use the model
 youtube-miner run "URL" --model indic-seamless --language hi
 ```
 
@@ -527,6 +553,8 @@ youtube_miner/
 │   ├── architecture.png    # Pipeline diagram
 │   ├── architecture.drawio # Editable diagram
 │   └── technical_design.md # Technical documentation
+├── .env                    # Environment variables (gitignored)
+├── .env.example            # Template for .env file
 ├── requirements.txt
 └── pyproject.toml
 ```
@@ -551,6 +579,31 @@ youtube-miner run URL --model whisper-tiny
 ```bash
 pip install certifi
 ```
+
+### HuggingFace Authentication Error
+
+If you see errors like:
+```
+sentence-transformers/all-MiniLM-L6-v2 is not a valid model identifier
+If this is a private repository, make sure to pass a token...
+```
+
+**Solution:** Create a `.env` file with your HuggingFace token:
+
+```bash
+# Create .env file in project root
+echo "HF_TOKEN=your_token_here" > .env
+```
+
+Get your free token at: https://huggingface.co/settings/tokens
+
+### Indic-Seamless Model Access
+
+If you see "Access denied" for `indic-seamless`:
+
+1. Go to https://huggingface.co/ai4bharat/indic-seamless
+2. Accept the model license agreement
+3. Make sure your `HF_TOKEN` in `.env` has read access
 
 ---
 

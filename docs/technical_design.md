@@ -26,7 +26,7 @@
 
 ### 1.1 Track Selection
 
-**Track:** Data Pipeline
+**Track:** Data Engineering / ML Pipeline
 
 This project was built for the **Data Engineering track** focusing on building robust, scalable data pipelines with ML integration. The solution demonstrates:
 
@@ -639,13 +639,31 @@ pip install -r requirements.txt
 pip install -e .
 ```
 
-#### Step 5: Configure Environment (Optional)
+#### Step 5: Configure Environment Variables
 
-For `indic-seamless` model (Hindi/Indian languages):
+Create a `.env` file in the project root for HuggingFace authentication:
+
 ```bash
-# Get token from https://huggingface.co/settings/tokens
-export HF_TOKEN="your_huggingface_token"
+# Copy the example file
+cp .env.example .env
+
+# Edit with your token
+nano .env
 ```
+
+Add your HuggingFace token to `.env`:
+```env
+# Required for Indic-Seamless model and sentence-transformers
+HF_TOKEN=your_huggingface_token_here
+```
+
+Get your free token at: https://huggingface.co/settings/tokens
+
+> **Note:** The HF_TOKEN is required for:
+> - `indic-seamless` model (Hindi/Indian languages)
+> - `sentence-transformers` (semantic similarity calculations)
+> 
+> The `.env` file is gitignored and won't be committed to version control.
 
 ### 5.3 Verification
 
@@ -683,6 +701,8 @@ youtube_miner/
 │   ├── architecture.png        # Architecture diagram
 │   └── technical_design.md     # This document
 ├── output/                     # Processing outputs
+├── .env                        # Environment variables (gitignored)
+├── .env.example                # Template for .env file
 ├── requirements.txt            # Python dependencies
 ├── pyproject.toml             # Package configuration
 └── README.md                   # Quick start guide

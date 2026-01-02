@@ -1,12 +1,19 @@
 """Semantic similarity using sentence embeddings."""
 
 import logging
+import os
+from pathlib import Path
 from typing import Optional
 
 import torch
+from dotenv import load_dotenv
 from sentence_transformers import SentenceTransformer, util
 
 from src.comparator.normalizer import TextNormalizer
+
+# Load environment variables from .env file
+_project_root = Path(__file__).parent.parent.parent
+load_dotenv(_project_root / ".env")
 
 logger = logging.getLogger(__name__)
 
@@ -48,8 +55,18 @@ class SemanticSimilarity:
         """Load the sentence transformer model."""
         if self._model is None:
             logger.info(f"Loading sentence transformer: {self.model_name}")
-            self._model = SentenceTransformer(self.model_name, device=self.device)
-            logger.info("Sentence transformer loaded successfully")
+            hf_token = os.environ.get("HF_TOKEN")
+            try:
+                self._model = SentenceTransformer(
+                    self.model_name,
+                    device=self.device,
+                    token=hf_token,
+                )
+                logger.info("Sentence transformer loaded successfully")
+            except Exception as e:
+                logger.warning(f"Failed to load sentence transformer: {e}")
+                logger.info("Attempting to load without token...")
+                self._model = SentenceTransformer(self.model_name, device=self.device)
     
     def calculate(self, text1: str, text2: str) -> float:
         """Calculate semantic similarity between two texts.
@@ -112,4 +129,3 @@ class SemanticSimilarity:
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
         logger.info("Sentence transformer unloaded")
-

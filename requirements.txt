@@ -39,6 +39,7 @@ flask>=3.0.0
 numpy>=1.24.0
 pyyaml>=6.0.0
 certifi>=2024.0.0
+python-dotenv>=1.0.0
 
 # Development (install with: pip install -r requirements.txt -r requirements-dev.txt)
 # Or use: pip install -e ".[dev]"
