@@ -56,7 +56,8 @@ git clone <repository-url>
 cd youtube_miner
 
 # Create virtual environment
-python -m venv venv
+python3 -m venv venv # Linux/macOS
+# or : python -m venv venv for Windows
 source venv/bin/activate  # Linux/macOS
 # or: venv\Scripts\activate  # Windows
 
