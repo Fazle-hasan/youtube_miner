@@ -6,14 +6,18 @@ from pathlib import Path
 from typing import Optional
 
 import torch
-from dotenv import load_dotenv
 from sentence_transformers import SentenceTransformer, util
 
 from src.comparator.normalizer import TextNormalizer
 
-# Load environment variables from .env file
-_project_root = Path(__file__).parent.parent.parent
-load_dotenv(_project_root / ".env")
+# Load environment variables from .env file (optional - graceful fallback)
+try:
+    from dotenv import load_dotenv
+    _project_root = Path(__file__).parent.parent.parent
+    load_dotenv(_project_root / ".env")
+except ImportError:
+    # python-dotenv not installed - user must set env vars manually
+    pass
 
 logger = logging.getLogger(__name__)
 

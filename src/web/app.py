@@ -9,12 +9,16 @@ import uuid
 from pathlib import Path
 from typing import Dict, Any, List, Optional
 
-from dotenv import load_dotenv
 from flask import Flask, render_template, request, jsonify, send_from_directory
 
-# Load environment variables from .env file at app startup
-_project_root = Path(__file__).parent.parent.parent
-load_dotenv(_project_root / ".env")
+# Load environment variables from .env file at app startup (optional - graceful fallback)
+try:
+    from dotenv import load_dotenv
+    _project_root = Path(__file__).parent.parent.parent
+    load_dotenv(_project_root / ".env")
+except ImportError:
+    # python-dotenv not installed - user must set env vars manually
+    pass
 
 from src.pipeline import YouTubeMinerPipeline, extract_video_id
 from src.transcriber import list_available_models

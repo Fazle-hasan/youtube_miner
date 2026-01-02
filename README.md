@@ -86,6 +86,7 @@ HF_TOKEN=your_huggingface_token_here
 
 Get your free token at: https://huggingface.co/settings/tokens
 
+> ⚠️ **Note:** The `.env` file is gitignored and won't be committed to version control.
 
 ### Step 4: Verify Installation
 
@@ -603,6 +604,24 @@ If you see "Access denied" for `indic-seamless`:
 1. Go to https://huggingface.co/ai4bharat/indic-seamless
 2. Accept the model license agreement
 3. Make sure your `HF_TOKEN` in `.env` has read access
+
+### ImportError: cannot import IndicSeamlessTranscriber
+
+If you see this error when running `youtube-miner`:
+```
+ImportError: cannot import name 'IndicSeamlessTranscriber'
+```
+
+**Solution:** Install missing dependencies:
+```bash
+pip install -r requirements.txt
+pip install python-dotenv
+```
+
+Or reinstall all dependencies:
+```bash
+pip install -r requirements.txt --force-reinstall
+```
 
 ---
 
