@@ -26,7 +26,7 @@
 
 ### 1.1 Track Selection
 
-**Track:** Data Engineering / ML Pipeline
+**Track:** Data Pipeline
 
 This project was built for the **Data Engineering track** focusing on building robust, scalable data pipelines with ML integration. The solution demonstrates:
 
