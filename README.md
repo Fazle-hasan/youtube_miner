@@ -86,7 +86,6 @@ HF_TOKEN=your_huggingface_token_here
 
 Get your free token at: https://huggingface.co/settings/tokens
 
-> ⚠️ **Note:** The `.env` file is gitignored and won't be committed to version control.
 
 ### Step 4: Verify Installation
 
