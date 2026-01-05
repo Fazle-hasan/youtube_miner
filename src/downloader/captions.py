@@ -233,14 +233,19 @@ class CaptionExtractor:
         return text.strip()
     
     def get_caption_for_chunk(
-        self, captions: List[Caption], start_time: float, end_time: float
+        self, captions: List[Caption], start_time: float, end_time: float,
+        alignment_mode: str = "center"
     ) -> str:
-        """Get caption text for a specific time range.
+        """Get caption text for a specific time range with improved alignment.
         
         Args:
             captions: List of all captions.
             start_time: Chunk start time in seconds.
             end_time: Chunk end time in seconds.
+            alignment_mode: How to match captions to chunks:
+                - "center": Include caption if its center point is within chunk (default)
+                - "majority": Include caption if >50% overlaps with chunk
+                - "any": Include caption if any part overlaps (legacy behavior)
             
         Returns:
             Concatenated caption text for the time range.
@@ -248,8 +253,28 @@ class CaptionExtractor:
         relevant_texts = []
         
         for caption in captions:
-            # Check if caption overlaps with chunk
-            if caption.end_time >= start_time and caption.start_time <= end_time:
+            include = False
+            
+            if alignment_mode == "center":
+                # Include caption only if its center point falls within the chunk
+                caption_center = (caption.start_time + caption.end_time) / 2
+                include = start_time <= caption_center <= end_time
+                
+            elif alignment_mode == "majority":
+                # Include caption only if majority (>50%) of it overlaps with chunk
+                overlap_start = max(caption.start_time, start_time)
+                overlap_end = min(caption.end_time, end_time)
+                overlap_duration = max(0, overlap_end - overlap_start)
+                caption_duration = caption.end_time - caption.start_time
+                
+                if caption_duration > 0:
+                    overlap_ratio = overlap_duration / caption_duration
+                    include = overlap_ratio > 0.5
+                    
+            else:  # "any" - legacy behavior
+                include = caption.end_time >= start_time and caption.start_time <= end_time
+            
+            if include:
                 relevant_texts.append(caption.text)
         
         return ' '.join(relevant_texts)
