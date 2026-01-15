@@ -386,13 +386,27 @@ def start(host: str, port: int, output: str, debug: bool, background: bool):
     if PID_FILE.exists():
         try:
             pid = int(PID_FILE.read_text().strip())
-            # Check if process is still running
-            os.kill(pid, 0)
-            console.print(f"[yellow]⚠ Web server already running (PID: {pid})[/yellow]")
-            console.print(f"   Use [bold]youtube-miner web stop[/bold] to stop it first")
-            return
-        except (ProcessLookupError, ValueError):
-            # Process not running, remove stale PID file
+            # Check if process is still running (cross-platform)
+            try:
+                import psutil
+                if psutil.pid_exists(pid):
+                    console.print(f"[yellow]⚠ Web server already running (PID: {pid})[/yellow]")
+                    console.print(f"   Use [bold]youtube-miner web stop[/bold] to stop it first")
+                    return
+                else:
+                    PID_FILE.unlink()
+            except ImportError:
+                # Fallback: try os.kill on Unix, skip check on Windows
+                try:
+                    os.kill(pid, 0)
+                    console.print(f"[yellow]⚠ Web server already running (PID: {pid})[/yellow]")
+                    console.print(f"   Use [bold]youtube-miner web stop[/bold] to stop it first")
+                    return
+                except (OSError, ProcessLookupError):
+                    # Process not running or on Windows, remove stale PID file
+                    PID_FILE.unlink()
+        except ValueError:
+            # Invalid PID file content, remove it
             PID_FILE.unlink()
     
     if background:
